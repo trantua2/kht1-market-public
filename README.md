@@ -7,4 +7,8 @@ Dữ liệu đọc từ `market.json` trên Supabase Storage mà web local đẩ
 `app.css` và `market-view.js` được chép từ `kht_market/static/` bằng
 `python3 -m kht_market build-public` — đừng sửa trực tiếp ở đây.
 
-Đưa lên GitHub Pages: xem mục "Public lên web" trong README gốc.
+Production: https://kht1-market-public.vercel.app
+
+Vercel đã nối với nhánh `main` của repo `trantua2/kht1-market-public`.
+Mỗi lần push thay đổi giao diện lên `main`, Vercel tự deploy lại. Dữ liệu chợ
+vẫn được cập nhật độc lập qua `market.json` trên Supabase Storage.
