@@ -35,6 +35,20 @@ function formatMarketPrice(value, currency) {
   return `${formatter.format(value)}${suffix}`;
 }
 
+function currencyKind(currency) {
+  const normalized = fold(currency);
+  if (['vnd', 'tien dong', 'dong', 'coin'].includes(normalized)) return 'coin';
+  if (['silver', 'tien bac', 'bac'].includes(normalized)) return 'silver';
+  return '';
+}
+
+function matchesPriceLimit(item, filters) {
+  if (filters.priceMax === null) return true;
+  if (item.price == null || currencyKind(item.currency) !== filters.priceCurrency) return false;
+  if (item.price > filters.priceMax) return false;
+  return true;
+}
+
 function elementClass(element) {
   return ({
     Kim: 'element-kim',
@@ -64,6 +78,7 @@ function jewelryType(name) {
 function currentFilters() {
   const minValue = $('#filter-min').value;
   const maxValue = $('#filter-max').value;
+  const priceMaxValue = $('#filter-price-max').value;
   return {
     query: $('#filter-query').value.trim(),
     itemType: $('#filter-item-type').value,
@@ -71,6 +86,8 @@ function currentFilters() {
     option: $('#filter-option').value,
     min: minValue === '' ? null : Number(minValue),
     max: maxValue === '' ? null : Number(maxValue),
+    priceMax: priceMaxValue === '' ? null : Number(priceMaxValue),
+    priceCurrency: $('#filter-price-currency').value,
   };
 }
 
@@ -86,6 +103,7 @@ function filterSnapshot(snapshot, filters) {
       } else if (filters.element && item.element !== filters.element) {
         return false;
       }
+      if (!matchesPriceLimit(item, filters)) return false;
       if (!filters.option) return true;
       return (item.options || []).some((option) => {
         if (option.label !== filters.option) return false;
@@ -179,10 +197,10 @@ function populateOptionFilter(snapshot) {
   if (labels.includes(selected)) select.value = selected;
 }
 
-['#filter-query', '#filter-min', '#filter-max'].forEach((selector) => {
+['#filter-query', '#filter-min', '#filter-max', '#filter-price-max'].forEach((selector) => {
   $(selector).addEventListener('input', applyFilters);
 });
-['#filter-item-type', '#filter-element', '#filter-option'].forEach((selector) => {
+['#filter-item-type', '#filter-element', '#filter-option', '#filter-price-currency'].forEach((selector) => {
   $(selector).addEventListener('change', applyFilters);
 });
 
@@ -193,6 +211,8 @@ function resetMarketFilters() {
   $('#filter-option').value = '';
   $('#filter-min').value = '';
   $('#filter-max').value = '';
+  $('#filter-price-max').value = '';
+  $('#filter-price-currency').value = 'coin';
   applyFilters();
 }
 
