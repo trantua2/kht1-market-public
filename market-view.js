@@ -132,12 +132,21 @@ function renderShops(shops) {
           (option) => `<li>${escapeHtml(optionText(option))}</li>`,
         ).join('')}</ul>`
         : '<span class="meta">Chưa có option</span>';
+      const element = escapeHtml(item.element || 'Chưa rõ');
+      const level = item.level == null ? '—' : escapeHtml(item.level);
+      const mobileLevel = item.level == null ? 'Chưa rõ cấp' : `Cấp ${level}`;
       return `<tr>
-        <td><strong class="item-name">${escapeHtml(item.name)}</strong></td>
-        <td><span class="element-label ${elementClass(item.element)}">${escapeHtml(item.element || 'Chưa rõ')}</span></td>
-        <td class="level">${item.level == null ? '—' : escapeHtml(item.level)}</td>
-        <td class="price">${escapeHtml(formatMarketPrice(item.price, item.currency))}</td>
-        <td>${options}</td>
+        <td class="item-cell" data-label="Tên đồ">
+          <strong class="item-name">${escapeHtml(item.name)}</strong>
+          <span class="item-meta">
+            <span class="element-label ${elementClass(item.element)}">${element}</span>
+            <span>${mobileLevel}</span>
+          </span>
+        </td>
+        <td data-label="Hệ"><span class="element-label ${elementClass(item.element)}">${element}</span></td>
+        <td class="level" data-label="Cấp">${level}</td>
+        <td class="price" data-label="Giá">${escapeHtml(formatMarketPrice(item.price, item.currency))}</td>
+        <td class="options-cell" data-label="Option">${options}</td>
       </tr>`;
     }).join('');
     article.innerHTML = `
