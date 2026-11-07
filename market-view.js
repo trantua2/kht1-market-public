@@ -81,6 +81,7 @@ function currentFilters() {
   const priceMaxValue = $('#filter-price-max').value;
   return {
     query: $('#filter-query').value.trim(),
+    city: $('#filter-city').value,
     itemType: $('#filter-item-type').value,
     element: $('#filter-element').value,
     option: $('#filter-option').value,
@@ -92,7 +93,9 @@ function currentFilters() {
 }
 
 function filterSnapshot(snapshot, filters) {
-  return snapshot.shops.map((shop) => ({
+  return snapshot.shops.filter(
+    (shop) => !filters.city || shop.map_name === filters.city,
+  ).map((shop) => ({
     ...shop,
     items: shop.items.filter((item) => {
       const queryText = fold(item.name);
@@ -197,15 +200,26 @@ function populateOptionFilter(snapshot) {
   if (labels.includes(selected)) select.value = selected;
 }
 
+function populateCityFilter(snapshot) {
+  const select = $('#filter-city');
+  const selected = select.value;
+  const cities = [...new Set(snapshot.shops.map((shop) => shop.map_name).filter(Boolean))]
+    .sort((left, right) => left.localeCompare(right, 'vi'));
+  select.replaceChildren(new Option('Tất cả thành', ''));
+  cities.forEach((city) => select.add(new Option(city, city)));
+  if (cities.includes(selected)) select.value = selected;
+}
+
 ['#filter-query', '#filter-min', '#filter-max', '#filter-price-max'].forEach((selector) => {
   $(selector).addEventListener('input', applyFilters);
 });
-['#filter-item-type', '#filter-element', '#filter-option', '#filter-price-currency'].forEach((selector) => {
+['#filter-city', '#filter-item-type', '#filter-element', '#filter-option', '#filter-price-currency'].forEach((selector) => {
   $(selector).addEventListener('change', applyFilters);
 });
 
 function resetMarketFilters() {
   $('#filter-query').value = '';
+  $('#filter-city').value = '';
   $('#filter-item-type').value = '';
   $('#filter-element').value = '';
   $('#filter-option').value = '';
@@ -220,6 +234,7 @@ $('#filter-reset').addEventListener('click', resetMarketFilters);
 
 function setMarketSnapshot(snapshot) {
   marketSnapshot = snapshot;
+  populateCityFilter(marketSnapshot);
   populateOptionFilter(marketSnapshot);
   applyFilters();
 }
