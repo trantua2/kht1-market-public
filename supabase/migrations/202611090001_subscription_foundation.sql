@@ -33,6 +33,16 @@ create table public.market_snapshots (
   id bigint generated always as identity primary key, published_at timestamptz not null,
   payload jsonb not null, created_at timestamptz not null default now()
 );
+create table public.desktop_auth_codes (
+  id uuid primary key default gen_random_uuid(), user_id uuid not null references public.profiles(id) on delete cascade,
+  code_hash text not null unique, pkce_challenge text not null, callback_url text not null,
+  expires_at timestamptz not null, consumed_at timestamptz, created_at timestamptz not null default now()
+);
+create table public.desktop_sessions (
+  id uuid primary key default gen_random_uuid(), user_id uuid not null references public.profiles(id) on delete cascade,
+  token_hash text not null unique, device_id_hash text, expires_at timestamptz not null,
+  revoked_at timestamptz, created_at timestamptz not null default now(), last_seen_at timestamptz not null default now()
+);
 
 create or replace function public.handle_new_user() returns trigger language plpgsql security definer set search_path=public as $$
 begin insert into public.profiles(id,email) values(new.id,coalesce(new.email,'')) on conflict(id) do nothing; return new; end $$;
@@ -57,6 +67,8 @@ end $$;
 
 alter table public.profiles enable row level security; alter table public.subscriptions enable row level security; alter table public.devices enable row level security; alter table public.subscription_events enable row level security;
 alter table public.market_snapshots enable row level security;
+alter table public.desktop_auth_codes enable row level security;
+alter table public.desktop_sessions enable row level security;
 create policy profile_self_read on public.profiles for select using(id=auth.uid() or public.is_admin());
 create policy subscription_self_read on public.subscriptions for select using(user_id=auth.uid() or public.is_admin());
 create policy device_self_read on public.devices for select using(user_id=auth.uid() or public.is_admin());
