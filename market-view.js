@@ -143,7 +143,7 @@ function renderShops(shops) {
   empty.hidden = shops.length > 0;
   empty.textContent = marketSnapshot.shop_count
     ? 'Không có món nào khớp bộ lọc.'
-    : 'Ba thành chưa có dữ liệu quét.';
+    : 'Chưa có thành nào có dữ liệu quét.';
   shopGroups.replaceChildren(...renderedShops.map((shop) => {
     const article = document.createElement('article');
     article.className = 'shop-group';
