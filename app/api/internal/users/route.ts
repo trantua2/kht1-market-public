@@ -29,6 +29,13 @@ export async function POST(request:NextRequest){
     }
     if(body.action==="delete_user"){
       if(typeof body.user_id!=="string")throw new Error("User không hợp lệ");
+      const {data:ownedSubscriptions,error:ownedSubscriptionsError}=await db.from("subscriptions").select("id").eq("user_id",body.user_id);
+      if(ownedSubscriptionsError)throw ownedSubscriptionsError;
+      const subscriptionIds=(ownedSubscriptions??[]).map(subscription=>subscription.id);
+      if(subscriptionIds.length){
+        const {error:subscriptionEventReferenceError}=await db.from("subscription_events").update({subscription_id:null}).in("subscription_id",subscriptionIds);
+        if(subscriptionEventReferenceError)throw subscriptionEventReferenceError;
+      }
       const {error:subscriptionReferenceError}=await db.from("subscriptions").update({created_by:null}).eq("created_by",body.user_id);
       if(subscriptionReferenceError)throw subscriptionReferenceError;
       const {error:eventReferenceError}=await db.from("subscription_events").update({performed_by:null}).eq("performed_by",body.user_id);
