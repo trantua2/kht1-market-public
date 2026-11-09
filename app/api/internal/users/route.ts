@@ -19,16 +19,27 @@ export async function POST(request:NextRequest){
   try{
     const body=await request.json();
     const db=createAdminClient();
-    if(body.action==="set_role"){
-      if(typeof body.user_id!=="string"||!ROLES.includes(body.role))throw new Error("Role không hợp lệ");
-      const {data,error}=await db.from("profiles").update({role:body.role}).eq("id",body.user_id).select("id,email,role").single();
+    if(body.action==="create_user"){
+      const email=String(body.email??"").trim().toLowerCase(),password=String(body.password??"");
+      if(!email.includes("@"))throw new Error("Email không hợp lệ");
+      if(password.length<8)throw new Error("Mật khẩu phải có ít nhất 8 ký tự");
+      const {data,error}=await db.auth.admin.createUser({email,password,email_confirm:true});
       if(error)throw error;
-      return NextResponse.json({ok:true,user:data});
+      return NextResponse.json({ok:true,user:{id:data.user.id,email:data.user.email}});
     }
-    if(body.action==="subscription"){
-      if(typeof body.user_id!=="string"||!PLANS.includes(body.plan)||!STATUSES.includes(body.status))throw new Error("Subscription không hợp lệ");
+    if(body.action==="delete_user"){
+      if(typeof body.user_id!=="string")throw new Error("User không hợp lệ");
+      const {error}=await db.auth.admin.deleteUser(body.user_id);
+      if(error)throw error;
+      return NextResponse.json({ok:true});
+    }
+    if(body.action==="update_user"){
+      if(typeof body.user_id!=="string"||!ROLES.includes(body.role))throw new Error("Role không hợp lệ");
+      if(!PLANS.includes(body.plan)||!STATUSES.includes(body.status))throw new Error("Subscription không hợp lệ");
       const days=Number(body.days);
       if(!Number.isInteger(days)||days<1||days>3650)throw new Error("Số ngày phải từ 1 đến 3650");
+      const {error:roleError}=await db.from("profiles").update({role:body.role}).eq("id",body.user_id);
+      if(roleError)throw roleError;
       const {data:current,error:readError}=await db.from("subscriptions").select("*").eq("user_id",body.user_id).neq("status","revoked").maybeSingle();
       if(readError)throw readError;
       const now=new Date(),expiresAt=calculateExtension(current?.expires_at,days,now).toISOString();
@@ -37,7 +48,7 @@ export async function POST(request:NextRequest){
       const {data,error}=await query.select("*").single();
       if(error)throw error;
       await db.from("subscription_events").insert({user_id:body.user_id,subscription_id:data.id,action:current?"update":"grant",previous_value:current,new_value:data});
-      return NextResponse.json({ok:true,subscription:data});
+      return NextResponse.json({ok:true,subscription:data,role:body.role});
     }
     throw new Error("Action không hợp lệ");
   }catch(error){return NextResponse.json({error:error instanceof Error?error.message:"Invalid request"},{status:400})}
