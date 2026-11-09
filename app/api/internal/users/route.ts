@@ -29,6 +29,10 @@ export async function POST(request:NextRequest){
     }
     if(body.action==="delete_user"){
       if(typeof body.user_id!=="string")throw new Error("User không hợp lệ");
+      const {error:subscriptionReferenceError}=await db.from("subscriptions").update({created_by:null}).eq("created_by",body.user_id);
+      if(subscriptionReferenceError)throw subscriptionReferenceError;
+      const {error:eventReferenceError}=await db.from("subscription_events").update({performed_by:null}).eq("performed_by",body.user_id);
+      if(eventReferenceError)throw eventReferenceError;
       const {error}=await db.auth.admin.deleteUser(body.user_id);
       if(error)throw error;
       return NextResponse.json({ok:true});
