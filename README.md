@@ -1,24 +1,13 @@
-# KHT1 Market subscription web
+# Trang public KHT1 Market
 
-Next.js application deployed on Vercel with Supabase Auth and Postgres.
+Thư mục này là web tĩnh, chỉ có phần danh sách vật phẩm (không có phần quét).
+Dữ liệu đọc từ `market.json` cùng deployment. Web admin local tự cập nhật file,
+commit và push khi bấm **Public dữ liệu lên web**.
 
-## Local setup
+`app.css` và `market-view.js` được chép từ `kht_market/static/` bằng
+`python3 -m kht_market build-public` — đừng sửa trực tiếp ở đây.
 
-```bash
-cp .env.example .env.local
-npm install
-npm run dev
-```
+Production: https://kht1-market-public.vercel.app
 
-Apply the SQL migration and follow [Supabase setup](docs/supabase-setup.md).
-The paid market snapshot is never committed or served as a static JSON file.
-Publish data through `POST /api/admin/market-ingest` with the configured bearer
-secret.
-
-## Verification
-
-```bash
-npm test
-npm run typecheck
-npm run build
-```
+Vercel đã nối với nhánh `main` của repo `trantua2/kht1-market-public`.
+Mỗi lần push giao diện hoặc dữ liệu lên `main`, Vercel tự deploy lại.
