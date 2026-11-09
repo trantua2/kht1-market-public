@@ -1,6 +1,6 @@
 # KHT1 Market subscription web
 
-Next.js application deployed on Vercel with Supabase Auth and Postgres.
+Next.js commercial application with Supabase email/password Auth and Postgres.
 
 ## Local setup
 
@@ -20,6 +20,11 @@ PKCE challenge, and random state. `/api/desktop/token` consumes the short-lived
 authorization code once; `/api/desktop/entitlement` resolves the current live
 subscription for privileged local operations. Never expose the Supabase service
 role key or ingestion secret in the desktop package.
+
+Customers register and sign in with email and password. Magic links are not the
+normal login mechanism; email links are reserved for verification and password
+recovery. Full desktop sessions read published items from
+`GET /api/desktop/market`.
 
 ## Verification
 
