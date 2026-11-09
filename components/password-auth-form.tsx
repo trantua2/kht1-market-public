@@ -39,16 +39,16 @@ export function PasswordAuthForm({ nextPath }: { nextPath: string }) {
     }
   }
 
-  return <div className="card">
+  return <div className="auth-card">
     <div className="auth-modes">
       <button type="button" className={mode === "login" ? "active" : ""} onClick={() => { setMode("login"); setMessage(""); }}>Đăng nhập</button>
       <button type="button" className={mode === "register" ? "active" : ""} onClick={() => { setMode("register"); setMessage(""); }}>Đăng ký</button>
     </div>
     <form onSubmit={submit}>
-      <label>Email<input name="email" type="email" required autoComplete="email" /></label>
-      <label>Mật khẩu<input name="password" type="password" minLength={8} maxLength={128} required autoComplete={mode === "login" ? "current-password" : "new-password"} /></label>
-      <button disabled={busy}>{busy ? "Đang xử lý…" : mode === "login" ? "Đăng nhập" : "Tạo tài khoản"}</button>
-      {message && <p className={message.includes("thành công") ? "" : "error"}>{message}</p>}
+      <label>Email<input name="email" type="email" placeholder="ten@email.com" required autoComplete="email" /></label>
+      <label>Mật khẩu<input name="password" type="password" placeholder="Tối thiểu 8 ký tự" minLength={8} maxLength={128} required autoComplete={mode === "login" ? "current-password" : "new-password"} /></label>
+      <button className="auth-submit" disabled={busy}>{busy ? "Đang xử lý…" : mode === "login" ? "Đăng nhập" : "Tạo tài khoản"}</button>
+      <p className={`auth-message ${message && !message.includes("thành công") ? "error" : ""}`} aria-live="polite">{message || "\u00a0"}</p>
     </form>
   </div>;
 }
