@@ -1,0 +1,2 @@
+import {redirect} from "next/navigation";import {currentEntitlement} from "@/lib/current-entitlement";
+export default async function Account(){const {user,entitlement}=await currentEntitlement();if(!user)redirect("/login?next=/account");return <main className="shell"><h1>Tài khoản</h1><div className="card"><p>{user.email}</p><p>Gói: {entitlement.plan??"Chưa có"}</p><p>Trạng thái: {entitlement.status}</p><p>Hết hạn: {entitlement.expires_at?new Date(entitlement.expires_at).toLocaleString("vi-VN"):"—"}</p></div></main>}
