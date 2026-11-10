@@ -6,7 +6,8 @@ create table public.payment_orders (
   amount integer not null check(amount > 0),
   currency text not null default 'VND' check(currency = 'VND'),
   order_code bigint not null unique,
-  provider text not null default 'payos' check(provider = 'payos'),
+  provider text not null default 'sepay' check(provider = 'sepay'),
+  provider_invoice_number text not null unique,
   provider_payment_id text unique,
   checkout_url text,
   status text not null default 'pending' check(status in ('pending','paid','cancelled','expired','failed')),
@@ -46,11 +47,11 @@ begin
   expiry_base:=case when old_row.id is not null and old_row.expires_at>now() then old_row.expires_at else now() end;
   if old_row.id is null then
     insert into public.subscriptions(user_id,plan,status,starts_at,expires_at,source,note)
-    values(payment_row.user_id,'full','active',start_time,expiry_base+make_interval(days=>payment_row.duration_days),'payment','payOS '||p_order_code)
+    values(payment_row.user_id,'full','active',start_time,expiry_base+make_interval(days=>payment_row.duration_days),'payment','SePay '||p_order_code)
     returning * into new_row;
   else
     update public.subscriptions set plan='full',status='active',starts_at=start_time,
-      expires_at=expiry_base+make_interval(days=>payment_row.duration_days),source='payment',note='payOS '||p_order_code,updated_at=now()
+      expires_at=expiry_base+make_interval(days=>payment_row.duration_days),source='payment',note='SePay '||p_order_code,updated_at=now()
     where id=old_row.id returning * into new_row;
   end if;
 

@@ -7,7 +7,7 @@ describe("billing UI",()=>{
     const checkout=readFileSync(new URL("../app/api/billing/checkout/route.ts",import.meta.url),"utf8");
     expect(pricing).toContain("BILLING_PRODUCTS");
     expect(pricing).toContain("PricingCards");
-    expect(checkout).toContain("createPayOSPaymentLink");
+    expect(checkout).toContain("createSePayCheckout");
     expect(checkout).toContain("payment_orders");
   });
 });

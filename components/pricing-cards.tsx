@@ -7,7 +7,7 @@ export function PricingCards({products,signedIn}:{products:readonly BillingProdu
   async function buy(code:string){
     if(!signedIn){location.href=`/login?next=${encodeURIComponent("/pricing")}`;return}
     setBusy(code);setError("");
-    try{const response=await fetch("/api/billing/checkout",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({product_code:code})});const payload=await response.json();if(!response.ok)throw new Error(payload.error||"Không tạo được thanh toán");location.href=payload.checkout_url}
+    try{const response=await fetch("/api/billing/checkout",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({product_code:code})});const payload=await response.json();if(!response.ok)throw new Error(payload.error||"Không tạo được thanh toán");const form=document.createElement("form");form.method="POST";form.action=payload.checkout_url;for(const [name,value] of Object.entries(payload.fields)){const input=document.createElement("input");input.type="hidden";input.name=name;input.value=String(value);form.appendChild(input)}document.body.appendChild(form);form.submit()}
     catch(reason){setError(reason instanceof Error?reason.message:"Không tạo được thanh toán");setBusy(null)}
   }
   return <>
