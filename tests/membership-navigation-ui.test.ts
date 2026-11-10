@@ -14,7 +14,7 @@ describe("membership-aware public navigation",()=>{
   it("redirects active members away from pricing",()=>{
     const pricing=read("app/pricing/page.tsx");
     expect(pricing).toContain('redirect("/account")');
-    expect(pricing).toContain("hasMarketAccess");
+    expect(pricing).toContain('entitlement.plan==="full"');
   });
 
   it("shows friendly labels and suppresses active renewal",()=>{
@@ -26,8 +26,8 @@ describe("membership-aware public navigation",()=>{
 
   it("uses Vietnamese package labels in admin controls",()=>{
     const editor=read("components/subscription-editor.tsx");
-    expect(editor).toContain("Gói tra cứu");
-    expect(editor).toContain("Gói hội viên");
+    expect(editor).toContain("Gói Normal");
+    expect(editor).toContain("Gói Plus");
     expect(editor).toContain("Đang sử dụng");
     expect(editor).not.toContain(">Full<");
     expect(editor).not.toContain(">Active<");

@@ -3,11 +3,12 @@ import { BILLING_PRODUCTS, getBillingProduct } from "../lib/billing-products";
 
 describe("billing products", () => {
   it("offers the approved one-time packages", () => {
-    expect(BILLING_PRODUCTS.map(({code,days,amount}) => ({code,days,amount}))).toEqual([
-      {code:"full_3d",days:3,amount:5_000},
-      {code:"full_7d",days:7,amount:10_000},
-      {code:"full_15d",days:15,amount:20_000},
-      {code:"full_30d",days:30,amount:35_000},
+    expect(BILLING_PRODUCTS.map(({code,plan,days,amount}) => ({code,plan,days,amount}))).toEqual([
+      {code:"market_3d",plan:"market",days:3,amount:3_000},
+      {code:"market_7d",plan:"market",days:7,amount:7_000},
+      {code:"market_15d",plan:"market",days:15,amount:15_000},
+      {code:"market_30d",plan:"market",days:30,amount:30_000},
+      {code:"full_30d",plan:"full",days:30,amount:40_000},
     ]);
   });
 

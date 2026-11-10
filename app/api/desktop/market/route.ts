@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     .maybeSingle();
   const entitlement = evaluateEntitlement(subscription as never);
   if (entitlement.plan !== "full" || !entitlement.features.includes("market.read")) {
-    return NextResponse.json({ error: "Gói Full đang hoạt động là bắt buộc" }, { status: 403 });
+    return NextResponse.json({ error: "Gói Plus đang hoạt động là bắt buộc" }, { status: 403 });
   }
   const { data, error } = await db.from("market_snapshots")
     .select("payload")

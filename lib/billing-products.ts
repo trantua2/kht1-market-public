@@ -1,5 +1,6 @@
 export type BillingProduct = {
   code: string;
+  plan: "market"|"full";
   days: number;
   amount: number;
   label: string;
@@ -7,10 +8,11 @@ export type BillingProduct = {
 };
 
 export const BILLING_PRODUCTS: readonly BillingProduct[] = [
-  {code:"full_3d",days:3,amount:5_000,label:"3 ngày"},
-  {code:"full_7d",days:7,amount:10_000,label:"7 ngày",badge:"Phổ biến"},
-  {code:"full_15d",days:15,amount:20_000,label:"15 ngày"},
-  {code:"full_30d",days:30,amount:35_000,label:"30 ngày",badge:"Tốt nhất"},
+  {code:"market_3d",plan:"market",days:3,amount:3_000,label:"3 ngày"},
+  {code:"market_7d",plan:"market",days:7,amount:7_000,label:"7 ngày",badge:"Phổ biến"},
+  {code:"market_15d",plan:"market",days:15,amount:15_000,label:"15 ngày"},
+  {code:"market_30d",plan:"market",days:30,amount:30_000,label:"30 ngày",badge:"Tiết kiệm"},
+  {code:"full_30d",plan:"full",days:30,amount:40_000,label:"Plus · 30 ngày",badge:"Xem đầy đủ"},
 ];
 
 export function getBillingProduct(code: unknown): BillingProduct {

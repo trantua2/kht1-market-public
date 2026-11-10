@@ -3,8 +3,8 @@ import {hasMarketAccess,planLabel,statusLabel} from "../lib/membership-display";
 
 describe("membership display",()=>{
   it("uses customer-friendly Vietnamese plan labels",()=>{
-    expect(planLabel("market")).toBe("Gói tra cứu");
-    expect(planLabel("full")).toBe("Gói hội viên");
+    expect(planLabel("market")).toBe("Gói Normal");
+    expect(planLabel("full")).toBe("Gói Plus");
     expect(planLabel(null)).toBe("Chưa đăng ký");
   });
 

@@ -1,11 +1,11 @@
 export type Plan = "market" | "full";
 export type SubscriptionStatus = "active" | "paused" | "revoked" | "expired";
-export type Feature = "market.read" | "quest.run" | "agent.download";
+export type Feature = "market.read" | "market.options.full" | "quest.run" | "agent.download";
 export type Subscription = { plan: Plan; status: SubscriptionStatus; starts_at: string; expires_at: string };
 
 const PLAN_FEATURES: Record<Plan, Feature[]> = {
   market: ["market.read"],
-  full: ["market.read", "quest.run", "agent.download"],
+  full: ["market.read", "market.options.full", "quest.run", "agent.download"],
 };
 
 export function evaluateEntitlement(subscription: Subscription | null, now = new Date()) {

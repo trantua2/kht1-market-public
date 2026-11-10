@@ -11,8 +11,8 @@ export function PricingCards({products,signedIn}:{products:readonly BillingProdu
     catch(reason){setError(reason instanceof Error?reason.message:"Không tạo được thanh toán");setBusy(null)}
   }
   return <>
-    <div className="pricing-grid">{products.map(product=><article className={`price-card service-certificate ${product.code==="full_30d"?"featured":""}`} key={product.code}>
-      {product.badge&&<span className="price-badge">{product.badge}</span>}<p className="certificate-kicker">THỜI HẠN SỬ DỤNG</p><h2>{product.label}</h2><p className="price-value">{product.amount.toLocaleString("vi-VN")}đ</p><p className="daily-price">{Math.round(product.amount/product.days).toLocaleString("vi-VN")}đ/ngày</p>
+    <div className="pricing-grid">{products.map(product=><article className={`price-card service-certificate ${product.plan==="full"?"featured plus-certificate":""}`} key={product.code}>
+      {product.badge&&<span className="price-badge">{product.badge}</span>}<p className="certificate-kicker">GÓI {product.plan==="full"?"PLUS":"NORMAL"}</p><h2>{product.label}</h2><p className="price-value">{product.amount.toLocaleString("vi-VN")}đ</p><p className="daily-price">{Math.round(product.amount/product.days).toLocaleString("vi-VN")}đ/ngày</p>
       <button onClick={()=>buy(product.code)} disabled={busy!==null}>{busy===product.code?"Đang tạo QR…":"Mua gói"}</button>
     </article>)}</div>
     {error&&<p className="billing-error" role="alert">{error}</p>}
