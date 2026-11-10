@@ -8,7 +8,6 @@ describe("billing products", () => {
       {code:"market_7d",plan:"market",days:7,amount:7_000},
       {code:"market_15d",plan:"market",days:15,amount:15_000},
       {code:"market_30d",plan:"market",days:30,amount:30_000},
-      {code:"full_30d",plan:"full",days:30,amount:40_000},
     ]);
   });
 

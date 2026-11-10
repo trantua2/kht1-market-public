@@ -14,7 +14,7 @@ describe("membership-aware public navigation",()=>{
   it("redirects active members away from pricing",()=>{
     const pricing=read("app/pricing/page.tsx");
     expect(pricing).toContain('redirect("/account")');
-    expect(pricing).toContain('entitlement.plan==="full"');
+    expect(pricing).toContain('if(entitlement.plan)redirect("/account")');
   });
 
   it("shows friendly labels and suppresses active renewal",()=>{

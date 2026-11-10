@@ -11,7 +11,7 @@ const integer=(value:string|null)=>value==null||value===""?undefined:Number(valu
 export async function GET(request:NextRequest){
   const {user,entitlement}=await currentEntitlement();
   if(!user)return NextResponse.json({error:"Đăng nhập bắt buộc"},{status:401});
-  if(!entitlement.features.includes("market.read"))return NextResponse.json({error:"Bạn cần gói Normal hoặc Plus"},{status:403});
+  if(!entitlement.features.includes("market.read"))return NextResponse.json({error:"Bạn cần gói tra cứu đang hoạt động"},{status:403});
   const db=createAdminClient();
   const {data:rateData,error:rateError}=await db.rpc("consume_market_rate_limit",{p_user_id:user.id,p_limit:30});
   if(rateError)return NextResponse.json({error:"Chưa thể kiểm tra giới hạn truy cập"},{status:503});

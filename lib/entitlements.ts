@@ -4,7 +4,7 @@ export type Feature = "market.read" | "market.options.full" | "quest.run" | "age
 export type Subscription = { plan: Plan; status: SubscriptionStatus; starts_at: string; expires_at: string };
 
 const PLAN_FEATURES: Record<Plan, Feature[]> = {
-  market: ["market.read"],
+  market: ["market.read", "market.options.full"],
   full: ["market.read", "market.options.full", "quest.run", "agent.download"],
 };
 
