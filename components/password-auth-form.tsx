@@ -44,7 +44,7 @@ export function PasswordAuthForm({ nextPath }: { nextPath: string }) {
       <button type="button" className={mode === "login" ? "active" : ""} onClick={() => { setMode("login"); setMessage(""); }}>Đăng nhập</button>
       <button type="button" className={mode === "register" ? "active" : ""} onClick={() => { setMode("register"); setMessage(""); }}>Đăng ký</button>
     </div>
-    <form onSubmit={submit}>
+    <form className="editorial-form" onSubmit={submit}>
       <label>Email<input name="email" type="email" placeholder="ten@email.com" required autoComplete="email" /></label>
       <label>Mật khẩu<input name="password" type="password" placeholder="Tối thiểu 8 ký tự" minLength={8} maxLength={128} required autoComplete={mode === "login" ? "current-password" : "new-password"} /></label>
       <button className="auth-submit" disabled={busy}>{busy ? "Đang xử lý…" : mode === "login" ? "Đăng nhập" : "Tạo tài khoản"}</button>

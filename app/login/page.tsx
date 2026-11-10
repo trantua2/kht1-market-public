@@ -5,12 +5,12 @@ export default async function Login({searchParams}:{searchParams:Promise<{next?:
   return <main className="auth-page">
     <section className="auth-shell">
       <header className="auth-brand">
-        <span className="auth-mark">K1</span>
-        <div><p>KIẾM HIỆP TÌNH 1</p><h1>KHT1 Market</h1></div>
+        <span className="auth-mark">俠</span>
+        <div><p>KIẾM HIỆP TÌNH 1 · SABO</p><h1>KHT1 Market</h1></div>
       </header>
-      <p className="auth-intro">Đăng nhập để xem sản phẩm và kết nối công cụ desktop.</p>
+      <div className="ornamental-rule"><span>◆</span></div><p className="auth-intro">Đăng nhập để vào chợ giang hồ.</p>
       <PasswordAuthForm nextPath={safeNextPath(params.next)} />
-      <p className="auth-footnote">Tài khoản được bảo vệ bởi Supabase Auth.</p>
+      <p className="auth-footnote">Một tài khoản dùng cho web và KHT1 Tool.</p>
     </section>
   </main>;
 }

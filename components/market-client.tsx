@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { createClient } from "@/lib/supabase/browser";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 
 type Option = { label?: string; value?: number; unit?: string };
 type Item = { name?: string; price?: number; currency?: string; element?: string; level?: number; options?: Option[] };
@@ -46,17 +46,14 @@ export function MarketClient(){
   const rendered=useMemo(()=>limitedShops(matches),[matches]);
   const matchedItems=matches.reduce((sum,shop)=>sum+shop.items.length,0),renderedItems=rendered.reduce((sum,shop)=>sum+shop.items.length,0);
   const set=<K extends keyof Filters>(key:K,value:Filters[K])=>setFilters(current=>({...current,[key]:value}));
-  async function signOut(){await createClient().auth.signOut();location.href="/login"}
   const summary=Object.entries(snapshot.snapshots??{}).map(([city,date])=>`${city}: ${date?new Date(date).toLocaleString("vi-VN"):"chưa quét"}`).join(" · ");
 
   return <main className="market-shell">
-    <header className="hero">
-      <div><p className="eyebrow">KIẾM HIỆP TÌNH 1 · SABO</p><h1>Sạp hàng KHT1</h1><p className="subtitle">Danh sách vật phẩm đang bán ở các sạp. Dữ liệu cập nhật theo từng lượt quét.</p></div>
-      <div className="hero-side"><nav className="account-nav"><Link href="/market">Sản phẩm</Link><Link href="/pricing">Mua gói</Link><Link href="/account">Tài khoản</Link><button type="button" onClick={signOut}>Đăng xuất</button></nav><div className={`status ${error?"error":loading?"":"ok"}`}><span className="dot"/><span>{error||(loading?"Đang tải dữ liệu…":`Cập nhật ${snapshot.published_at?new Date(snapshot.published_at).toLocaleString("vi-VN"):"không rõ"}`)}</span></div></div>
-    </header>
-    <section className="market panel">
-      <div className="market-head"><div><h2>Dữ liệu mới nhất của các thành</h2><p className="hint">{loading?"Đang tải dữ liệu…":`${snapshot.shop_count} sạp · ${snapshot.item_count} món${summary?` · ${summary}`:""}`}</p></div></div>
-      <div className="filter-grid">
+    <SiteHeader signedIn/>
+    <section className="catalogue-masthead"><div><p className="eyebrow">DANH MỤC VẬT PHẨM</p><h1>Chợ giang hồ</h1><p className="subtitle">Tra cứu vật phẩm theo sạp, thành và thuộc tính.</p></div><div className={`status ${error?"error":loading?"":"ok"}`}><span className="dot"/><span>{error||(loading?"Đang tải…":`Cập nhật ${snapshot.published_at?new Date(snapshot.published_at).toLocaleString("vi-VN"):"không rõ"}`)}</span></div></section>
+    <section className="market panel editorial-panel">
+      <div className="market-head"><div><h2>Dữ liệu mới nhất</h2><p className="hint">{loading?"Đang tải dữ liệu…":`${snapshot.shop_count} sạp · ${snapshot.item_count} món${summary?` · ${summary}`:""}`}</p></div></div>
+      <div className="filter-grid filter-toolbar">
         <label>Tên món<input type="search" placeholder="Toàn Thạch, Giới Chỉ…" value={filters.query} onChange={event=>set("query",event.target.value)}/></label>
         <label>Thành<select value={filters.city} onChange={event=>set("city",event.target.value)}><option value="">Tất cả thành</option>{cities.map(city=><option key={city}>{city}</option>)}</select></label>
         <label>Loại trang sức<select value={filters.itemType} onChange={event=>set("itemType",event.target.value)}><option value="">Tất cả loại</option><option value="ring">Nhẫn</option><option value="necklace">Hạng liên</option><option value="pendant">Ngọc bội</option><option value="charm">Hộ thân phù</option><option value="sachet">Hương nang</option></select></label>
@@ -68,7 +65,8 @@ export function MarketClient(){
       </div>
       <div className="section-title"><h2>Danh sách theo sạp</h2><span className="count">{matches.length} sạp · {matchedItems} món{matchedItems>renderedItems?` · hiển thị ${renderedItems} món đầu`:""}</span></div>
       {error?<div className="empty error">{error}</div>:!loading&&!matches.length?<div className="empty">{snapshot.shop_count?"Không có món nào khớp bộ lọc.":"Chưa có thành nào có dữ liệu quét."}</div>:null}
-      <div className="shop-groups">{rendered.map((shop,index)=><article className="shop-group" key={`${shop.owner_name}-${shop.shop_name}-${index}`}><header className="shop-header"><div><h3>{shop.shop_name||"Sạp không tên"}</h3><span>Chủ sạp {shop.owner_name}</span></div><div className="shop-location">{shop.map_name||"Chưa rõ thành"} {shop.x??"?"}:{shop.y??"?"} · {shop.items.length} món</div></header><div className="table-scroll"><table className="item-table"><thead><tr><th>Tên đồ</th><th>Hệ</th><th>Cấp</th><th>Giá</th><th>Option</th></tr></thead><tbody>{shop.items.map((item,itemIndex)=><tr key={`${item.name}-${itemIndex}`}><td className="item-cell" data-label="Tên đồ"><strong className="item-name">{item.name}</strong><span className="item-meta"><span className={`element-label ${elementClass(item.element)}`}>{item.element||"Chưa rõ"}</span><span>{item.level==null?"Chưa rõ cấp":`Cấp ${item.level}`}</span></span></td><td data-label="Hệ"><span className={`element-label ${elementClass(item.element)}`}>{item.element||"Chưa rõ"}</span></td><td className="level" data-label="Cấp">{item.level??"—"}</td><td className="price" data-label="Giá">{formatPrice(item.price,item.currency)}</td><td className="options-cell" data-label="Option">{item.options?.length?<ul className="option-list">{item.options.map((option,optionIndex)=><li key={`${option.label}-${optionIndex}`}>{optionText(option)}</li>)}</ul>:<span className="meta">Chưa có option</span>}</td></tr>)}</tbody></table></div></article>)}</div>
+      <div className="shop-groups shop-ledger">{rendered.map((shop,index)=><article className="shop-group" key={`${shop.owner_name}-${shop.shop_name}-${index}`}><header className="shop-header"><div><h3>{shop.shop_name||"Sạp không tên"}</h3><span>Chủ sạp {shop.owner_name}</span></div><div className="shop-location">{shop.map_name||"Chưa rõ thành"} {shop.x??"?"}:{shop.y??"?"} · {shop.items.length} món</div></header><div className="table-scroll"><table className="item-table"><thead><tr><th>Tên đồ</th><th>Hệ</th><th>Cấp</th><th>Giá</th><th>Option</th></tr></thead><tbody>{shop.items.map((item,itemIndex)=><tr key={`${item.name}-${itemIndex}`}><td className="item-cell" data-label="Tên đồ"><strong className="item-name">{item.name}</strong><span className="item-meta"><span className={`element-label ${elementClass(item.element)}`}>{item.element||"Chưa rõ"}</span><span>{item.level==null?"Chưa rõ cấp":`Cấp ${item.level}`}</span></span></td><td data-label="Hệ"><span className={`element-label ${elementClass(item.element)}`}>{item.element||"Chưa rõ"}</span></td><td className="level" data-label="Cấp">{item.level??"—"}</td><td className="price" data-label="Giá">{formatPrice(item.price,item.currency)}</td><td className="options-cell" data-label="Option">{item.options?.length?<ul className="option-list">{item.options.map((option,optionIndex)=><li key={`${option.label}-${optionIndex}`}>{optionText(option)}</li>)}</ul>:<span className="meta">Chưa có option</span>}</td></tr>)}</tbody></table></div></article>)}</div>
     </section>
+    <SiteFooter/>
   </main>
 }
