@@ -49,7 +49,7 @@ export function MarketClient(){
   const summary=Object.entries(snapshot.snapshots??{}).map(([city,date])=>`${city}: ${date?new Date(date).toLocaleString("vi-VN"):"chưa quét"}`).join(" · ");
 
   return <main className="market-shell">
-    <SiteHeader signedIn/>
+    <SiteHeader signedIn hasAccess/>
     <section className="catalogue-masthead"><div><p className="eyebrow">DANH MỤC VẬT PHẨM</p><h1>Chợ giang hồ</h1><p className="subtitle">Tra cứu vật phẩm theo sạp, thành và thuộc tính.</p></div><div className={`status ${error?"error":loading?"":"ok"}`}><span className="dot"/><span>{error||(loading?"Đang tải…":`Cập nhật ${snapshot.published_at?new Date(snapshot.published_at).toLocaleString("vi-VN"):"không rõ"}`)}</span></div></section>
     <section className="market panel editorial-panel">
       <div className="market-head"><div><h2>Dữ liệu mới nhất</h2><p className="hint">{loading?"Đang tải dữ liệu…":`${snapshot.shop_count} sạp · ${snapshot.item_count} món${summary?` · ${summary}`:""}`}</p></div></div>

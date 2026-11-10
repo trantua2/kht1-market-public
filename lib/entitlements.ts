@@ -10,7 +10,8 @@ const PLAN_FEATURES: Record<Plan, Feature[]> = {
 
 export function evaluateEntitlement(subscription: Subscription | null, now = new Date()) {
   const active = Boolean(subscription && subscription.status === "active" && new Date(subscription.starts_at) <= now && new Date(subscription.expires_at) > now);
-  return { plan: active ? subscription!.plan : null, status: subscription?.status ?? "none", starts_at: subscription?.starts_at ?? null, expires_at: subscription?.expires_at ?? null, features: active ? PLAN_FEATURES[subscription!.plan] : [], server_time: now.toISOString() };
+  const status: SubscriptionStatus | "none" = subscription?.status==="active"&&new Date(subscription.expires_at)<=now?"expired":subscription?.status ?? "none";
+  return { plan: active ? subscription!.plan : null, status, starts_at: subscription?.starts_at ?? null, expires_at: subscription?.expires_at ?? null, features: active ? PLAN_FEATURES[subscription!.plan] : [], server_time: now.toISOString() };
 }
 
 export function hasFeature(features: readonly Feature[], feature: Feature) { return features.includes(feature); }

@@ -6,7 +6,7 @@ export default async function Login({searchParams}:{searchParams:Promise<{next?:
     <section className="auth-shell">
       <header className="auth-brand">
         <span className="auth-mark">俠</span>
-        <div><p>KIẾM HIỆP TÌNH 1 · SABO</p><h1>KHT1 Market</h1></div>
+        <div><p>KIẾM HIỆP TÌNH 1</p><h1>KHT1 Market</h1></div>
       </header>
       <div className="ornamental-rule"><span>◆</span></div><p className="auth-intro">Đăng nhập để vào chợ giang hồ.</p>
       <PasswordAuthForm nextPath={safeNextPath(params.next)} />
