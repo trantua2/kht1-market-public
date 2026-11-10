@@ -5,9 +5,9 @@ describe("billing products", () => {
   it("offers the approved one-time packages", () => {
     expect(BILLING_PRODUCTS.map(({code,plan,days,amount}) => ({code,plan,days,amount}))).toEqual([
       {code:"market_3d",plan:"market",days:3,amount:3_000},
-      {code:"market_7d",plan:"market",days:7,amount:7_000},
-      {code:"market_15d",plan:"market",days:15,amount:15_000},
-      {code:"market_30d",plan:"market",days:30,amount:30_000},
+      {code:"market_7d",plan:"market",days:7,amount:6_000},
+      {code:"market_15d",plan:"market",days:15,amount:12_000},
+      {code:"market_30d",plan:"market",days:30,amount:20_000},
     ]);
   });
 

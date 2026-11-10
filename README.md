@@ -28,15 +28,15 @@ recovery. Full desktop sessions read published items from
 
 ## One-time payments with SePay
 
-`/pricing` offers four Full packages: 3 days/5,000 VND, 7 days/10,000 VND,
-15 days/20,000 VND, and 30 days/35,000 VND. These are one-time payments and do
+`/pricing` offers four lookup packages: 3 days/3,000 VND, 7 days/6,000 VND,
+15 days/12,000 VND, and 30 days/20,000 VND. These are one-time payments and do
 not automatically renew or charge the customer again.
 
 Apply `supabase/migrations/202611100001_one_time_payments.sql`, then configure
 these server-only environment variables:
 
 ```bash
-SEPAY_ENV=sandbox
+SEPAY_ENV=production
 SEPAY_MERCHANT_ID=
 SEPAY_SECRET_KEY=
 SEPAY_IPN_SECRET=
