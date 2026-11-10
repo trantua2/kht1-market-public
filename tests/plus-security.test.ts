@@ -40,5 +40,6 @@ describe("Plus payment and abuse controls",()=>{
     expect(client).toContain("plus-lock-block");
     expect(client).toContain("plus-modal");
     expect(client).toContain("full_30d");
+    expect(client).not.toContain("Mở khóa {item.locked_option_count} dòng Plus");
   });
 });
