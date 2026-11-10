@@ -37,9 +37,11 @@ describe("Plus payment and abuse controls",()=>{
   it("renders synthetic locked blocks and a Plus upsell",()=>{
     const client=read("components/market-client.tsx");
     expect(client).toContain("locked_option_count");
-    expect(client).toContain("plus-lock-block");
+    expect(client).toContain("plus-option-link");
     expect(client).toContain("plus-modal");
     expect(client).toContain("full_30d");
     expect(client).not.toContain("Mở khóa {item.locked_option_count} dòng Plus");
+    expect(client).toContain("Xem thuộc tính Plus");
+    expect(client).not.toContain("plus-blur-lines");
   });
 });
