@@ -52,7 +52,7 @@ export function MarketClient(){
   return <main className="market-shell">
     <header className="hero">
       <div><p className="eyebrow">KIẾM HIỆP TÌNH 1 · SABO</p><h1>Sạp hàng KHT1</h1><p className="subtitle">Danh sách vật phẩm đang bán ở các sạp. Dữ liệu cập nhật theo từng lượt quét.</p></div>
-      <div className="hero-side"><nav className="account-nav"><Link href="/market">Sản phẩm</Link><Link href="/account">Tài khoản</Link><button type="button" onClick={signOut}>Đăng xuất</button></nav><div className={`status ${error?"error":loading?"":"ok"}`}><span className="dot"/><span>{error||(loading?"Đang tải dữ liệu…":`Cập nhật ${snapshot.published_at?new Date(snapshot.published_at).toLocaleString("vi-VN"):"không rõ"}`)}</span></div></div>
+      <div className="hero-side"><nav className="account-nav"><Link href="/market">Sản phẩm</Link><Link href="/pricing">Mua gói</Link><Link href="/account">Tài khoản</Link><button type="button" onClick={signOut}>Đăng xuất</button></nav><div className={`status ${error?"error":loading?"":"ok"}`}><span className="dot"/><span>{error||(loading?"Đang tải dữ liệu…":`Cập nhật ${snapshot.published_at?new Date(snapshot.published_at).toLocaleString("vi-VN"):"không rõ"}`)}</span></div></div>
     </header>
     <section className="market panel">
       <div className="market-head"><div><h2>Dữ liệu mới nhất của các thành</h2><p className="hint">{loading?"Đang tải dữ liệu…":`${snapshot.shop_count} sạp · ${snapshot.item_count} món${summary?` · ${summary}`:""}`}</p></div></div>
