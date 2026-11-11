@@ -1,3 +1,3 @@
-import { redirect } from "next/navigation";
+import {ProductTrailer} from "@/components/product-trailer";
 
-export default function Home(){redirect("/market")}
+export default function Home(){return <ProductTrailer/>}
