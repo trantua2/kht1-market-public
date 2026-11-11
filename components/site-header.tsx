@@ -8,7 +8,7 @@ export function SiteHeader({signedIn=false,hasAccess=false}:{signedIn?:boolean;h
   return <header className="site-header">
     <Link prefetch className="site-brand" href="/"><span className="brand-seal">俠</span><span><b>KHT1 Market</b><small>Kiếm Hiệp Tình 1</small></span></Link>
     <nav className="site-nav" aria-label="Điều hướng chính">
-      <Link prefetch href="/market">Sản phẩm</Link>{!hasAccess&&<Link prefetch href="/pricing">Bảng giá</Link>}{signedIn?<Link prefetch href="/account">Tài khoản</Link>:<Link prefetch href="/login?next=/market">Đăng nhập</Link>}
+      <a href="https://t.me/cyantou" target="_blank" rel="noopener noreferrer">Liên hệ</a><Link prefetch href="/market">Sản phẩm</Link>{!hasAccess&&<Link prefetch href="/pricing">Bảng giá</Link>}{signedIn?<Link prefetch href="/account">Tài khoản</Link>:<Link prefetch href="/login?next=/market">Đăng nhập</Link>}
       {signedIn&&<button type="button" onClick={signOut}>Đăng xuất</button>}
     </nav>
   </header>;
