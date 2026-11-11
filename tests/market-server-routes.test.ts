@@ -15,7 +15,7 @@ describe("server-aware market routes",()=>{
   it("scopes the web market and returns server choices",()=>{
     const source=read("app/api/market/route.ts");
     expect(source).toContain('params.get("server")');
-    expect(source).toContain('.eq("server_slug",server.slug)');
+    expect(source).toContain("getLatestMarketSnapshot(server.slug)");
     expect(source).toContain("servers:");
     expect(source).toContain("server:publicMarketServer(server)");
   });
@@ -23,6 +23,6 @@ describe("server-aware market routes",()=>{
   it("scopes the desktop market by server",()=>{
     const source=read("app/api/desktop/market/route.ts");
     expect(source).toContain('request.nextUrl.searchParams.get("server")');
-    expect(source).toContain('.eq("server_slug", server.slug)');
+    expect(source).toContain("getLatestMarketSnapshot(server.slug)");
   });
 });

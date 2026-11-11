@@ -30,7 +30,7 @@ export function MarketClient(){
     catch(reason){if((reason as Error).name!=="AbortError")setError(reason instanceof Error?reason.message:"Không tải được dữ liệu")}
     finally{append?setLoadingMore(false):setLoading(false)}
   }
-  useEffect(()=>{const controller=new AbortController();const timer=setTimeout(()=>load(undefined,false,controller.signal),280);return()=>{clearTimeout(timer);controller.abort()}},[filters.server,filters.query,filters.city,filters.itemType,filters.element,filters.option,filters.min,filters.max,filters.priceMax,filters.priceCurrency]);
+  useEffect(()=>{const controller=new AbortController();const timer=setTimeout(()=>load(undefined,false,controller.signal),180);return()=>{clearTimeout(timer);controller.abort()}},[filters.server,filters.query,filters.city,filters.itemType,filters.element,filters.option,filters.min,filters.max,filters.priceMax,filters.priceCurrency]);
   const citySummary=Object.keys(page?.snapshots??{}).join(" · ");
   return <main className="market-shell">
     <SiteHeader signedIn hasAccess/>
