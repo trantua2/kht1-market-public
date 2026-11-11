@@ -4,6 +4,7 @@ import {currentEntitlement} from "@/lib/current-entitlement";
 import {createAdminClient} from "@/lib/supabase/admin";
 import {requiredEnv} from "@/lib/config";
 import {projectMarketPage} from "@/lib/market-access";
+import {publicMarketServer,resolveMarketServer,type MarketServer} from "@/lib/market-servers";
 
 const EMPTY_MARKET={published_at:null,shop_count:0,item_count:0,shops:[]};
 const integer=(value:string|null)=>value==null||value===""?undefined:Number(value);
@@ -22,15 +23,20 @@ export async function GET(request:NextRequest){
     await db.from("market_access_audit").insert({user_id:user.id,ip_hash:ipHash,user_agent:(request.headers.get("user-agent")||"").slice(0,500),reason:"rate_limit",request_count:rate?.request_count??null});
     return NextResponse.json({error:"Bạn thao tác quá nhanh. Hãy thử lại sau."},{status:429,headers:{"Retry-After":String(rate?.retry_after??60)}});
   }
-  const {data,error}=await db.from("market_snapshots").select("payload").order("published_at",{ascending:false}).limit(1).maybeSingle();
-  if(error)return NextResponse.json({error:error.message},{status:500});
   const params=request.nextUrl.searchParams;
+  const {data:serverRows,error:serverError}=await db.from("market_servers").select("slug,code,name,is_active,is_default,display_order").eq("is_active",true).order("display_order");
+  if(serverError)return NextResponse.json({error:serverError.message},{status:500});
+  let server;
+  try{server=resolveMarketServer((serverRows??[]) as MarketServer[],params.get("server"));}
+  catch(reason){return NextResponse.json({error:reason instanceof Error?reason.message:"Chưa cấu hình máy chủ"},{status:503})}
+  const {data,error}=await db.from("market_snapshots").select("payload").eq("server_slug",server.slug).order("published_at",{ascending:false}).limit(1).maybeSingle();
+  if(error)return NextResponse.json({error:error.message},{status:500});
   try{
     const page=projectMarketPage((data?.payload??EMPTY_MARKET) as never,{
       fullOptions:entitlement.features.includes("market.options.full"),cursor:params.get("cursor"),limit:integer(params.get("limit"))??100,
       query:params.get("query")||undefined,city:params.get("city")||undefined,itemType:params.get("itemType")||undefined,element:params.get("element")||undefined,option:params.get("option")||undefined,
       min:integer(params.get("min")),max:integer(params.get("max")),priceMax:integer(params.get("priceMax")),priceCurrency:params.get("priceCurrency")||undefined,
     });
-    return NextResponse.json(page,{headers:{"Cache-Control":"private, no-store","X-RateLimit-Remaining":String(rate.remaining??0)}});
+    return NextResponse.json({...page,server:publicMarketServer(server),servers:(serverRows??[]).map(row=>publicMarketServer(row as MarketServer))},{headers:{"Cache-Control":"private, no-store","X-RateLimit-Remaining":String(rate.remaining??0)}});
   }catch(reason){return NextResponse.json({error:reason instanceof Error?reason.message:"Bộ lọc không hợp lệ"},{status:400})}
 }
