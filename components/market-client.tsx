@@ -31,20 +31,19 @@ export function MarketClient(){
     finally{append?setLoadingMore(false):setLoading(false)}
   }
   useEffect(()=>{const controller=new AbortController();const timer=setTimeout(()=>load(undefined,false,controller.signal),280);return()=>{clearTimeout(timer);controller.abort()}},[filters.server,filters.query,filters.city,filters.itemType,filters.element,filters.option,filters.min,filters.max,filters.priceMax,filters.priceCurrency]);
-  const summary=Object.entries(page?.snapshots??{}).map(([city,date])=>`${city}: ${date?new Date(date).toLocaleString("vi-VN"):"chưa quét"}`).join(" · ");
+  const citySummary=Object.keys(page?.snapshots??{}).join(" · ");
   return <main className="market-shell">
     <SiteHeader signedIn hasAccess/>
-    <section className="catalogue-masthead"><div><p className="eyebrow">DANH MỤC VẬT PHẨM</p><h1>Chợ giang hồ</h1><p className="subtitle">{page?.server.code} {page?.server.name?`– ${page.server.name} · `:""}Tra cứu vật phẩm theo sạp, thành và thuộc tính.</p></div><div className={`status ${error?"error":loading?"":"ok"}`}><span className="dot"/><span>{error||(loading?"Đang tải…":`Cập nhật ${page?.published_at?new Date(page.published_at).toLocaleString("vi-VN"):"không rõ"}`)}</span></div></section>
-    <section className="market panel editorial-panel">
-      <div className="market-head"><div><h2>Dữ liệu mới nhất</h2><p className="hint">{loading?"Đang tải dữ liệu…":`${page?.shop_count??0} sạp · ${page?.item_count??0} món${summary?` · ${summary}`:""}`}</p></div></div>
-      <div className="filter-groups">
-        <section className="filter-group filter-primary"><header><div><p className="filter-kicker">BỘ LỌC CHÍNH</p><h3>Bộ lọc chính</h3></div><button type="button" className="filter-reset" onClick={resetPrimaryFilters}>Reset bộ lọc chính</button></header><div className="filter-fields">
+    <section className={`market-status-strip ${error?"error":loading?"":"ok"}`}><div className="market-status-main"><strong>{page?.server.code} {page?.server.name?`– ${page.server.name}`:""}</strong><span>•</span><span>{page?.shop_count??0} sạp</span><span>•</span><span>{page?.item_count??0} món</span>{citySummary&&<><span>•</span><span>{citySummary}</span></>}</div><div className="market-status-update"><span className="dot"/><span>{error||(loading?"Đang tải…":`Cập nhật ${page?.published_at?new Date(page.published_at).toLocaleString("vi-VN"):"không rõ"}`)}</span></div></section>
+    <section className="market compact-market">
+      <div className="filter-sections">
+        <section className="filter-section filter-primary"><header><h3>Khu vực &amp; giá</h3><button type="button" className="filter-reset" onClick={resetPrimaryFilters}>Đặt lại</button></header><div className="filter-fields">
           <label>Máy chủ<select value={filters.server||page?.server.slug||""} onChange={event=>{setShops([]);set("server",event.target.value)}}>{page?.servers.map(server=><option value={server.slug} key={server.slug}>{server.code} – {server.name}</option>)}</select></label>
           <label>Thành<select value={filters.city} onChange={event=>set("city",event.target.value)}><option value="">Tất cả thành</option>{page?.filters.cities.map(city=><option key={city}>{city}</option>)}</select></label>
           <label>Giá tối đa<input type="number" min="0" value={filters.priceMax} onChange={event=>set("priceMax",event.target.value)}/></label>
           <label>Loại tiền<select value={filters.priceCurrency} onChange={event=>set("priceCurrency",event.target.value)}><option value="coin">Xu</option><option value="silver">Bạc</option></select></label>
         </div></section>
-        <section className="filter-group filter-options"><header><div><p className="filter-kicker">TÌM ĐÚNG MÓN</p><h3>Thuộc tính vật phẩm</h3></div><button type="button" className="filter-reset" onClick={resetOptionFilters}>Reset thuộc tính</button></header><div className="filter-fields">
+        <section className="filter-section filter-options"><header><h3>Thuộc tính</h3><button type="button" className="filter-reset" onClick={resetOptionFilters}>Đặt lại</button></header><div className="filter-fields">
           <label>Tên món<input type="search" placeholder="Toàn Thạch, Giới Chỉ…" value={filters.query} onChange={event=>set("query",event.target.value)}/></label>
           <label>Loại trang sức<select value={filters.itemType} onChange={event=>set("itemType",event.target.value)}><option value="">Tất cả loại</option><option value="ring">Nhẫn</option><option value="necklace">Hạng liên</option><option value="pendant">Ngọc bội</option><option value="charm">Hộ thân phù</option><option value="sachet">Hương nang</option></select></label>
           <label>Hệ<select value={filters.element} onChange={event=>set("element",event.target.value)}><option value="">Tất cả hệ</option><option>Kim</option><option>Mộc</option><option>Thủy</option><option>Hỏa</option><option>Thổ</option><option value="__unknown__">Chưa rõ hệ</option></select></label>
