@@ -21,7 +21,7 @@ describe("Võ Lâm editorial public UI",()=>{
   it("keeps shop grouping in the editorial market catalogue",()=>{
     const source=read("components/market-client.tsx");
     expect(source).toContain("shop-ledger");
-    expect(source).toContain("filter-toolbar");
+    expect(source).toContain("filter-groups");
     expect(source).toContain("shop.owner_name");
     expect(source).toContain("shop.x");
   });
