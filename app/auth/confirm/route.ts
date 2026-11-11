@@ -1,0 +1,4 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { safeNextPath } from "@/lib/auth";
+export async function GET(request:NextRequest) { const token_hash=request.nextUrl.searchParams.get("token_hash"); const type=request.nextUrl.searchParams.get("type") as "email"|"magiclink"|"signup"|null; const code=request.nextUrl.searchParams.get("code"); const client=await createClient(); if(code){const {error}=await client.auth.exchangeCodeForSession(code);if(!error)return NextResponse.redirect(new URL(safeNextPath(request.nextUrl.searchParams.get("next")),request.url));} if(token_hash&&type){ const {error}=await client.auth.verifyOtp({token_hash,type}); if(!error) return NextResponse.redirect(new URL(safeNextPath(request.nextUrl.searchParams.get("next")),request.url)); } return NextResponse.redirect(new URL("/login?error=invalid_link",request.url)); }

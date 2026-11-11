@@ -1,13 +1,57 @@
-# Trang public KHT1 Market
+# KHT1 Market subscription web
 
-Thư mục này là web tĩnh, chỉ có phần danh sách vật phẩm (không có phần quét).
-Dữ liệu đọc từ `market.json` cùng deployment. Web admin local tự cập nhật file,
-commit và push khi bấm **Public dữ liệu lên web**.
+Next.js commercial application with Supabase email/password Auth and Postgres.
 
-`app.css` và `market-view.js` được chép từ `kht_market/static/` bằng
-`python3 -m kht_market build-public` — đừng sửa trực tiếp ở đây.
+## Local setup
 
-Production: https://kht1-market-public.vercel.app
+```bash
+cp .env.example .env.local
+npm install
+npm run dev
+```
 
-Vercel đã nối với nhánh `main` của repo `trantua2/kht1-market-public`.
-Mỗi lần push giao diện hoặc dữ liệu lên `main`, Vercel tự deploy lại.
+Apply the SQL migration and follow [Supabase setup](docs/supabase-setup.md).
+The paid market snapshot is never committed or served as a static JSON file.
+Publish data through `POST /api/admin/market-ingest` with the configured bearer
+secret.
+
+The desktop app starts login at `/desktop/connect` with a loopback callback,
+PKCE challenge, and random state. `/api/desktop/token` consumes the short-lived
+authorization code once; `/api/desktop/entitlement` resolves the current live
+subscription for privileged local operations. Never expose the Supabase service
+role key or ingestion secret in the desktop package.
+
+Customers register and sign in with email and password. Magic links are not the
+normal login mechanism; email links are reserved for verification and password
+recovery. Full desktop sessions read published items from
+`GET /api/desktop/market`.
+
+## One-time payments with SePay
+
+`/pricing` offers four lookup packages: 3 days/3,000 VND, 7 days/6,000 VND,
+15 days/12,000 VND, and 30 days/20,000 VND. These are one-time payments and do
+not automatically renew or charge the customer again.
+
+Apply `supabase/migrations/202611100001_one_time_payments.sql`, then configure
+these server-only environment variables:
+
+```bash
+SEPAY_ENV=production
+SEPAY_MERCHANT_ID=
+SEPAY_SECRET_KEY=
+SEPAY_IPN_SECRET=
+```
+
+Configure the SePay IPN URL as
+`https://<domain>/api/billing/sepay/ipn`. Only an IPN with the configured secret
+can invoke the database function that adds time. The payment return URL never
+grants access. The function locks each order and treats an already-paid order
+as idempotent, so webhook retries cannot add the duration twice.
+
+## Verification
+
+```bash
+npm test
+npm run typecheck
+npm run build
+```
