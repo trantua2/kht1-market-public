@@ -18,6 +18,14 @@ const NORMAL_OPTION_LABELS=new Set([
 
 export function isNormalOption(label:unknown){return typeof label==="string"&&NORMAL_OPTION_LABELS.has(label.trim())}
 
+export function normalMarketSnapshot<T extends Snapshot>(snapshot:T):T{
+  return {...snapshot,shops:snapshot.shops.map(shop=>({...shop,items:shop.items.map(item=>{
+    const options=visibleOptions(item,false);
+    const locked=(item.options??[]).length-options.length;
+    return {...item,options,...(locked?{locked_option_count:locked}:{})};
+  })}))} as T;
+}
+
 function fold(value:unknown){return String(value??"").toLocaleLowerCase("vi-VN").replace(/đ/g,"d").normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
 function jewelryType(name?:string){const value=fold(name);if(value.includes("gioi chi")||value.includes("nhan"))return "ring";if(value.includes("hang lien")||value.includes("day chuyen"))return "necklace";if(value.includes("ngoc boi"))return "pendant";if(value.includes("ho than phu"))return "charm";if(value.includes("huong nang"))return "sachet";return ""}
 function currencyKind(currency?:string){const value=fold(currency);if(["vnd","tien dong","dong","coin"].includes(value))return "coin";if(["silver","tien bac","bac"].includes(value))return "silver";return ""}

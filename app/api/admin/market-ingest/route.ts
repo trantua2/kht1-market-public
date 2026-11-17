@@ -4,6 +4,7 @@ import { requiredEnv } from "@/lib/config";
 import { parseMarketSnapshot } from "@/lib/market-validation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { invalidateMarketSnapshot } from "@/lib/market-data-cache";
+import { normalMarketSnapshot } from "@/lib/market-access";
 function same(a:string,b:string){const x=Buffer.from(a),y=Buffer.from(b);return x.length===y.length&&timingSafeEqual(x,y)}
 export async function POST(req:NextRequest){
   const token=req.headers.get("authorization")?.replace(/^Bearer\s+/i,"")??"";
@@ -14,7 +15,7 @@ export async function POST(req:NextRequest){
     if(serverError)throw serverError;
     if(!server)throw new Error("Máy chủ không tồn tại hoặc đã tắt");
     if(server.code!==snapshot.server.code||server.name!==snapshot.server.name)throw new Error("Thông tin máy chủ không khớp danh mục");
-    const {error}=await db.from("market_snapshots").insert({server_slug:snapshot.server.slug,published_at:snapshot.published_at,payload:snapshot});
+    const {error}=await db.from("market_snapshots").insert({server_slug:snapshot.server.slug,published_at:snapshot.published_at,payload:{...snapshot,normal_snapshot:normalMarketSnapshot(snapshot as never)}});
     if(error)throw error;
     invalidateMarketSnapshot(snapshot.server.slug);
     return NextResponse.json({ok:true,server_slug:snapshot.server.slug,published_at:snapshot.published_at,shop_count:snapshot.shop_count,item_count:snapshot.item_count});

@@ -57,11 +57,15 @@ export function getActiveMarketServers(){
   });
 }
 
-export function getLatestMarketSnapshot(serverSlug:string){
+export function getLatestMarketSnapshot(serverSlug:string,fullOptions=true){
   return snapshotsCache.get(serverSlug,async()=>{
     const {data,error}=await createAdminClient().from("market_snapshots").select("payload").eq("server_slug",serverSlug).order("published_at",{ascending:false}).limit(1).maybeSingle();
     if(error)throw error;
     return data?.payload??null;
+  }).then(value=>{
+    if(!value||fullOptions)return value;
+    const snapshot=value as {normal_snapshot?:unknown};
+    return snapshot.normal_snapshot??value;
   });
 }
 

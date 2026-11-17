@@ -31,7 +31,7 @@ export async function GET(request:NextRequest){
   try{server=resolveMarketServer(serverRows,params.get("server"));}
   catch(reason){return NextResponse.json({error:reason instanceof Error?reason.message:"Chưa cấu hình máy chủ"},{status:503})}
   try{
-    const snapshot=await getLatestMarketSnapshot(server.slug);
+    const snapshot=await getLatestMarketSnapshot(server.slug,entitlement.features.includes("market.options.full"));
     const page=projectMarketPage((snapshot??EMPTY_MARKET) as never,{
       fullOptions:entitlement.features.includes("market.options.full"),cursor:params.get("cursor"),limit:integer(params.get("limit"))??100,
       query:params.get("query")||undefined,city:params.get("city")||undefined,itemType:params.get("itemType")||undefined,element:params.get("element")||undefined,option:params.get("option")||undefined,
